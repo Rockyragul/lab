@@ -1,0 +1,51 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool: benny  # Changed pool name to 'benny'
+
+steps:
+- script: echo "Stage 1 - Setting up Java version."
+  displayName: 'Setting up Java version'
+
+# Maven task to build the project
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package'
+  displayName: 'Run Maven Build and Tests'
+
+- script: echo "Stage 2 - Maven build and test completed successfully."
+  displayName: 'Maven Build and Test Success'
+
+# Publish build artifacts (JAR, WAR, etc.)
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/target'
+    ArtifactName: 'my-java-artifacts'
+    publishLocation: 'container'
+  displayName: 'Publish Artifacts'
+
+- script: echo "Stage 3 - Artifacts published successfully."
+  displayName: 'Artifact Publish Success'
+
+# Publish the test results in JUnit format
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    failTaskOnFailedTests: true
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Publish Test Results'
+
+- script: echo "Regression test is successfully completed."
+  displayName: 'Regression Test Completion'

@@ -1,0 +1,8 @@
+﻿{
+  "agentId": 9,
+  "agentName": "benny",
+  "poolId": 10,
+  "poolName": "benny",
+  "serverUrl": "https://dev.azure.com/raguls090320040318/",
+  "workFolder": "_work"
+}
